@@ -155,3 +155,115 @@ Team total salary -> 173250.0 + 105000.0 + 84000.0
 =================================================
 
 """
+# Level 1: Person
+class Person:
+    species = "Homo sapiens"
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def greet(self):
+        return f"Hi, I'm {self.name}, age {self.age}"
+
+    @staticmethod
+    def is_adult(age):
+        return age >= 18
+
+
+# Level 2: Employee
+class Employee(Person):
+    company = "Acme Corp"
+    bonus_pct = 5
+
+    def __init__(self, name, age, emp_id, salary):
+        super().__init__(name, age)
+        self.emp_id = emp_id
+        self.salary = salary
+
+    def work_intro(self):
+        return f"I work at {Employee.company} as id {self.emp_id}"
+
+    def apply_bonus(self):
+        self.salary += self.salary * Employee.bonus_pct / 100
+
+    @classmethod
+    def set_bonus(cls, new_pct):
+        cls.bonus_pct = new_pct
+
+
+# Level 3: Manager
+class Manager(Employee):
+    def __init__(self, name, age, emp_id, salary, team):
+        super().__init__(name, age, emp_id, salary)
+        self.team = team
+
+    def add_member(self, employee):
+        self.team.append(employee)
+
+    def team_intro(self):
+        return f"I lead a team of {len(self.team)} people."
+
+    def team_total_salary(self):
+        total = self.salary
+
+        for emp in self.team:
+            total += emp.salary
+
+        return total
+
+
+#Driver Code
+
+# Create objects
+p = Person("Sam", 17)
+
+e1 = Employee("Alice", 25, "E001", 100000)
+e2 = Employee("Bob", 30, "E002", 80000)
+
+m = Manager("Carol", 40, "M001", 150000, [])
+
+# Add employees to manager's team
+m.add_member(e1)
+m.add_member(e2)
+
+print(p.greet())
+print()
+
+print(e1.greet())
+print(e1.work_intro())
+print()
+
+print(e2.greet())
+print(e2.work_intro())
+print()
+
+print(m.greet())
+print(m.work_intro())
+print(m.team_intro())
+print()
+
+# Apply 5% bonus
+e1.apply_bonus()
+e2.apply_bonus()
+m.apply_bonus()
+
+print("Alice salary ->", e1.salary)
+print("Bob salary   ->", e2.salary)
+print("Carol salary ->", m.salary)
+
+# Change bonus to 10%
+Employee.set_bonus(10)
+
+# Apply 10% bonus ONLY to manager
+m.apply_bonus()
+
+print("Carol salary ->", m.salary)
+print()
+
+print("is_adult(17) ->", Person.is_adult(17))
+print("is_adult(25) ->", Person.is_adult(25))
+print()
+
+# Team total salary
+print("Team total salary ->", m.team_total_salary())
